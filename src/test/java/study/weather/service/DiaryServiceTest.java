@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.weather.domain.Diary;
 import study.weather.dto.DiaryDto;
 import study.weather.dto.WeatherInfoDto;
+import study.weather.repository.DateWeatherRepository;
 import study.weather.repository.DiaryRepository;
 import study.weather.util.WeatherApi;
 
@@ -32,6 +33,8 @@ import static org.mockito.Mockito.verify;
 class DiaryServiceTest {
     @Mock
     private DiaryRepository diaryRepository;
+    @Mock
+    private DateWeatherRepository dateWeatherRepository;
     @Mock
     private WeatherApi weatherApi;
     @InjectMocks

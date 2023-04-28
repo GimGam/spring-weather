@@ -1,6 +1,7 @@
 package study.weather.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.cglib.core.Local;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -31,7 +32,11 @@ public class DiaryService {
 
     @Transactional
     public void createDiary(LocalDate date, String text) {
-        WeatherInfoDto weatherInfo = weatherApi.getWeatherInfo();
+
+        WeatherInfoDto weatherInfo = getWeatherInfoFromDB(date);
+        if(null == weatherInfo){
+            weatherInfo = weatherApi.getWeatherInfo();
+        }
 
         diaryRepository.save(Diary.builder()
                 .weather(weatherInfo.getWeather())
@@ -85,5 +90,20 @@ public class DiaryService {
                 .temperature(weatherInfo.getTemperature())
                 .icon(weatherInfo.getIcon())
                 .build());
+    }
+
+    private WeatherInfoDto getWeatherInfoFromDB(LocalDate date){
+
+        List<DateWeather> list = dateWeatherRepository.findAllByDate(date);
+        if(list.isEmpty()){
+            return null;
+        }
+
+        DateWeather dateWeather = list.get(0);
+        return WeatherInfoDto.builder()
+                .weather(dateWeather.getWeather())
+                .icon(dateWeather.getIcon())
+                .temperature(dateWeather.getTemperature())
+                .build();
     }
 }
